@@ -136,9 +136,9 @@ curl -X POST http://localhost:5000/recommend \
 ## 🔬 Citation
 
 ```bibtex
-@article{movie2024eahncf,
+@article{movie2023eahncf,
   title={Emotion-Aware Hybrid Neural Collaborative Filtering for Movie Recommendation},
-  author={[Your Name]},
-  year={2024}
+  author={Bhavesh Mukesh Chaudhari},
+  year={2023}
 }
 ```
