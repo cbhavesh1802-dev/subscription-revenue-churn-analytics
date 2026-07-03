@@ -2,9 +2,11 @@ import sqlite3
 import pandas as pd
 import os
 
-DB_PATH = "/home/claude/projects/02-subscription-churn-analytics/data/subscription_analytics.db"
-SQL_DIR = "/home/claude/projects/02-subscription-churn-analytics/sql"
-OUT_DIR = "/home/claude/projects/02-subscription-churn-analytics/outputs"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+DB_PATH = os.path.join(PROJECT_ROOT, "data", "subscription_analytics.db")
+SQL_DIR = SCRIPT_DIR
+OUT_DIR = os.path.join(PROJECT_ROOT, "outputs")
 os.makedirs(OUT_DIR, exist_ok=True)
 
 conn = sqlite3.connect(DB_PATH)
@@ -17,10 +19,10 @@ queries = {
 }
 
 for out_name, sql_file in queries.items():
-    with open(f"{SQL_DIR}/{sql_file}") as f:
+    with open(os.path.join(SQL_DIR, sql_file)) as f:
         query = f.read()
     df = pd.read_sql_query(query, conn)
-    out_path = f"{OUT_DIR}/{out_name}"
+    out_path = os.path.join(OUT_DIR, out_name)
     df.to_csv(out_path, index=False)
     print(f"{out_name}: {len(df)} rows -> {out_path}")
 
