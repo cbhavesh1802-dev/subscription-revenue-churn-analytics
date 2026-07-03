@@ -1,0 +1,4 @@
+plan,total_customers,churned_customers,churn_rate_pct,avg_mrr
+Basic,2019,1110,54.98,9.99
+Plus,1393,568,40.78,19.99
+Pro,588,149,25.34,39.99
