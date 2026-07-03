@@ -13,6 +13,14 @@ This project analyzes 60,000 subscription customers and 1.5M+ billing events acr
 - Cohort retention curves show how each signup months customers retain over their first N months, the standard SaaS retention view (outputs/cohort_retention.csv)
 - Monthly churn rate tracks the rate of customer loss month over month, useful for spotting seasonal or campaign-driven spikes (outputs/monthly_churn_rate.csv)
 
+
+## Charts
+
+![MRR trend](outputs/charts/mrr_trend.png)
+![Monthly churn rate](outputs/charts/monthly_churn_rate.png)
+![Churn by plan](outputs/charts/churn_by_plan.png)
+![Cohort retention heatmap](outputs/charts/cohort_retention_heatmap.png)
+
 ## Project Structure
 
 data/ - customers.csv, billing_events.csv, generate_data.py
