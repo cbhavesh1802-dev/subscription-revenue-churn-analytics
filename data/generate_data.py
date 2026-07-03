@@ -1,18 +1,19 @@
 """
-Generates synthetic subscription business data: customers, subscriptions,
-and monthly billing events -- enough to compute cohort retention, MRR, and
-churn like a real SaaS analytics project.
+Generates sample subscription business data: customers, subscriptions,
+and monthly billing events -- used to build and test cohort retention,
+MRR, and churn analysis queries.
 """
 
 import numpy as np
 import pandas as pd
+import os
 from datetime import date, timedelta
 
 np.random.seed(7)
 
-N_CUSTOMERS = 4000
-START = date(2024, 1, 1)
-MONTHS = 30  # Jan 2024 -> Jun 2026
+N_CUSTOMERS = 60_000
+START = date(2021, 1, 1)
+MONTHS = 66
 
 PLANS = {
     "Basic":   9.99,
@@ -31,7 +32,6 @@ subs = []
 sub_id = 1
 
 for cust_id in range(1, N_CUSTOMERS + 1):
-    # Signup month, weighted toward earlier months (business growing then maturing)
     signup_month_idx = np.random.geometric(p=0.09)
     signup_month_idx = min(signup_month_idx, MONTHS - 2)
     signup_date = month_add(START, signup_month_idx)
@@ -39,7 +39,6 @@ for cust_id in range(1, N_CUSTOMERS + 1):
     plan = np.random.choice(list(PLANS.keys()), p=PLAN_WEIGHTS)
     mrr = PLANS[plan]
 
-    # Monthly churn hazard depends on plan (Basic churns faster) and tenure
     base_hazard = {"Basic": 0.055, "Plus": 0.035, "Pro": 0.02}[plan]
 
     tenure = 0
@@ -48,7 +47,6 @@ for cust_id in range(1, N_CUSTOMERS + 1):
     m_idx = signup_month_idx
     while active and m_idx < MONTHS:
         tenure += 1
-        # Hazard decreases slightly with tenure (survivors are stickier)
         hazard = base_hazard * max(0.5, 1 - tenure * 0.02)
         if np.random.random() < hazard:
             active = False
@@ -66,7 +64,6 @@ for cust_id in range(1, N_CUSTOMERS + 1):
 
 customers_df = pd.DataFrame(customers)
 
-# Build monthly billing events: one row per customer per active month
 billing_rows = []
 for _, c in customers_df.iterrows():
     signup_idx = (c["signup_date"].year - START.year) * 12 + (c["signup_date"].month - START.month)
@@ -84,8 +81,11 @@ for _, c in customers_df.iterrows():
 
 billing_df = pd.DataFrame(billing_rows)
 
-customers_df.to_csv("/home/claude/projects/02-subscription-churn-analytics/data/customers.csv", index=False)
-billing_df.to_csv("/home/claude/projects/02-subscription-churn-analytics/data/billing_events.csv", index=False)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+customers_df.to_csv(os.path.join(SCRIPT_DIR, "customers.csv"), index=False)
+billing_df.to_csv(os.path.join(SCRIPT_DIR, "billing_events.csv"), index=False)
 
+active_count = customers_df["is_active"].sum()
+churned_count = (~customers_df["is_active"]).sum()
 print(f"Customers: {len(customers_df)}  |  Billing rows: {len(billing_df)}")
-print(f"Active: {customers_df['is_active'].sum()}  |  Churned: {(~customers_df['is_active']).sum()}")
+print(f"Active: {active_count}  |  Churned: {churned_count}")

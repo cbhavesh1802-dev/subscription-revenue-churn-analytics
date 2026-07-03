@@ -15,7 +15,7 @@ This project analyzes 60,000 subscription customers and 1.5M+ billing events acr
 
 ## Project Structure
 
-data/ - customers.csv, billing_events.csv, generate_synthetic.py
+data/ - customers.csv, billing_events.csv, generate_data.py
 sql/ - 01_mrr_trend.sql, 02_monthly_churn_rate.sql, 03_cohort_retention.sql (multi-CTE cohort retention by signup month), 04_churn_by_plan.sql, load_db.py, run_all_queries.py
 outputs/ - query results, ready for Power BI import
 
